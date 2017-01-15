@@ -13,10 +13,9 @@ shinyServer(
       data <- selectData(input$var, countries)
       color <- selectColour(input$var)
       
-      percent_map(var = data, 
-                  color = color,
-                  max = input$range[2], 
-                  min = input$range[1])
+      percent_map(input$var, 
+                  data, 
+                  color)
     })
     output$ranking <- renderPlot({
       data <- selectData(input$var, countries)
@@ -52,7 +51,5 @@ shinyServer(
       data2 <- selectData(input$compareAttr2, countries)
       cor(data1, data2)
     })
-    
-    
   }
 )
