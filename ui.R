@@ -27,6 +27,7 @@ shinyUI(fluidPage(
              )
     ),
     tabPanel("Discover",
+             
              sidebarLayout(
                sidebarPanel(
                  helpText("Discover correlations between the attributes from the data."),
@@ -46,7 +47,31 @@ shinyUI(fluidPage(
                ),
                mainPanel(plotOutput("correlationPlot"))  
              )
+    ),
+    tabPanel("Clustering",
              
+             sidebarLayout(
+               sidebarPanel(
+                 helpText("Visualize the results of hierarchical clustering."),
+                 
+                 selectInput("clusterAttr1", 
+                             label = "Choose the first attribute to see the clustering",
+                             choices = c("Area", "GDP", "Inflation", "Life Expect", "Military", "Population Growth",
+                                         "Unemployment"),
+                             selected = "Area"),
+                 selectInput("clusterAttr2", 
+                             label = "Choose the second attribute to see the clustering",
+                             choices = c("Area", "GDP", "Inflation", "Life Expect", "Military", "Population Growth",
+                                         "Unemployment"),
+                             selected = "GDP"),
+                 
+                 selectInput("clusterNum",
+                             label = "The number of clusters is",
+                             choices = c(3 , 4, 5, 6, 7, 8, 9, 10),
+                             selected = 3)
+               ),
+               mainPanel(plotOutput("clusterPlot"))
+             )
     )
   )
 )

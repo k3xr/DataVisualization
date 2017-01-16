@@ -24,6 +24,7 @@ shinyServer(
       plot <- ggplot(countries, aes(y=data, x=reorder(countries$Country, data)))
       plot <- plot + geom_bar(stat='identity', fill=color)
       plot <- plot + coord_flip() + labs(y=input$var, x="Country")
+      plot <- plot + geom_text(aes(label = data), position = position_stack(vjust = 0.5))
       plot
     })
     
@@ -50,6 +51,13 @@ shinyServer(
       data1 <- selectData(input$compareAttr1, countries)
       data2 <- selectData(input$compareAttr2, countries)
       cor(data1, data2)
+    })
+    
+    output$clusterPlot <- renderPlot({
+      data1 <- selectData(input$clusterAttr1, countries)
+      data2 <- selectData(input$clusterAttr2, countries)
+      resultList <- hierarchicalCluster(input$clusterAttr1, input$clusterAttr2, data1, data2, input$clusterNum)
+      resultList$ggPlot
     })
   }
 )

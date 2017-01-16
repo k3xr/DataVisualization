@@ -44,6 +44,30 @@ selectColour <- function(var, countries){
   return(colour)
 }
 
+clusterColour <- function(numberOfClusters){
+  
+}
+
+hierarchicalCluster <- function(name1, name2, data1, data2, clusterNum){
+  #Prepare the data
+  #mData = as.matrix(cbind(countries$Area, countries$GDP),ncol=2)
+  mData = scale(as.matrix(cbind(data1, data2),ncol=2))
+  clusters <- hclust(dist(mData))
+  clusterCut <- cutree(clusters, clusterNum)
+  plotData = data.frame(mData, factor(clusterCut))
+  colnames(plotData) <- c("var1","var2", "Cluster")
+  plot <- ggplot(plotData, aes(var1, var2, color=Cluster)) + geom_point() + labs(x=name1, y=name2)
+  df = data.frame(mData, clusterCut)
+  treePlot <- plot(clusters)
+  
+  #clusterText <-""
+  
+  #for (i in )
+  
+  resultList <- list("ggPlot" = plot, "treePlot" = treePlot)
+  
+}
+
 
 minMaxNorm <- function(arr){
   output <- (arr-min(arr))/(max(arr)-min(arr))
