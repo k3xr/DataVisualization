@@ -9,10 +9,17 @@ source("helpers.R")
 
 shinyServer(
   function(input, output) {
+    
+    #Reactive clustering to avoid executing it more than 1 time per plot
+    clusterResult <- reactive({
+      data1 <- selectData(input$clusterAttr1, countries)
+      data2 <- selectData(input$clusterAttr2, countries)
+      hierarchicalCluster(countries, input$clusterAttr1, input$clusterAttr2, data1, data2, input$clusterNum)
+    })
+    
     output$map <- renderPlot({
       data <- selectData(input$var, countries)
       color <- selectColour(input$var)
-      
       percent_map(input$var, 
                   data, 
                   color)
@@ -54,10 +61,22 @@ shinyServer(
     })
     
     output$clusterPlot <- renderPlot({
-      data1 <- selectData(input$clusterAttr1, countries)
-      data2 <- selectData(input$clusterAttr2, countries)
-      resultList <- hierarchicalCluster(input$clusterAttr1, input$clusterAttr2, data1, data2, input$clusterNum)
-      resultList$ggPlot
+      clusterResult()$ggPlot
+    })
+
+    output$clusterTable <- renderTable({
+      clusterResult()$clustersData
+    })
+    output$clusterGroups <- renderTable({
+      clusterResult()$clusterGroups
+    })
+    
+    output$clusterMap <- renderPlot({
+      data <- clusterResult()$clusterCut
+      color <- getColor(n = strtoi(input$clusterNum))
+      percent_map("Clusters", 
+                  data, 
+                  color, percentage = FALSE)
     })
   }
 )

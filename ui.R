@@ -12,7 +12,7 @@ shinyUI(fluidPage(
                  
                  selectInput("var", 
                              label = "Choose a variable to display",
-                             choices = c("Area", "GDP", "Inflation", "Life Expect", "Military", "Population Growth",
+                             choices = c("Area", "GDP", "Inflation", "Life Expectancy", "Military", "Population Growth",
                                          "Unemployment"),
                              selected = "Area")
                ),
@@ -34,12 +34,12 @@ shinyUI(fluidPage(
                  
                  selectInput("compareAttr1", 
                              label = "Choose the first attribute to compare",
-                             choices = c("Area", "GDP", "Inflation", "Life Expect", "Military", "Population Growth",
+                             choices = c("Area", "GDP", "Inflation", "Life Expectancy", "Military", "Population Growth",
                                          "Unemployment"),
                              selected = "Area"),
                  selectInput("compareAttr2", 
                              label = "Choose the second attribute to compare",
-                             choices = c("Area", "GDP", "Inflation", "Life Expect", "Military", "Population Growth",
+                             choices = c("Area", "GDP", "Inflation", "Life Expectancy", "Military", "Population Growth",
                                          "Unemployment"),
                              selected = "GDP"),
                  helpText("Their level of correlation is"),
@@ -56,12 +56,12 @@ shinyUI(fluidPage(
                  
                  selectInput("clusterAttr1", 
                              label = "Choose the first attribute to see the clustering",
-                             choices = c("Area", "GDP", "Inflation", "Life Expect", "Military", "Population Growth",
+                             choices = c("Area", "GDP", "Inflation", "Life Expectancy", "Military", "Population Growth",
                                          "Unemployment"),
                              selected = "Area"),
                  selectInput("clusterAttr2", 
                              label = "Choose the second attribute to see the clustering",
-                             choices = c("Area", "GDP", "Inflation", "Life Expect", "Military", "Population Growth",
+                             choices = c("Area", "GDP", "Inflation", "Life Expectancy", "Military", "Population Growth",
                                          "Unemployment"),
                              selected = "GDP"),
                  
@@ -71,7 +71,23 @@ shinyUI(fluidPage(
                              selected = 3)
                ),
                mainPanel(plotOutput("clusterPlot"))
-             )
+             ),
+             fluidRow(
+               style='padding-left:20px',
+               column(5,
+                      
+                        h3("Countries by cluster"),
+                        tableOutput("clusterGroups")
+               ),
+               column(7,
+                      plotOutput("clusterMap")  
+               )
+             ),
+             fluidRow(
+               style='padding-left:20px',
+               h3("Clusters Data (average)"),
+               tableOutput("clusterTable")
+             )   
     )
   )
 )
