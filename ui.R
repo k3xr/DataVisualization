@@ -72,11 +72,10 @@ shinyUI(fluidPage(
                  
                  selectInput("clusterNum",
                              label = "The number of clusters is",
-                             choices = c(3 , 4, 5, 6, 7, 8, 9, 10),
+                             choices = c(3, 4, 5, 6, 7, 8, 9, 10),
                              selected = 3)
                ),
                mainPanel(
-                 
                  plotOutput("clusterTree")
                )
                
@@ -88,7 +87,6 @@ shinyUI(fluidPage(
              fluidRow(
                style='padding-left:20px',
                column(5,
-                      
                       h3("Countries by cluster"),
                       tableOutput("clusterGroups")
                ),

@@ -8,7 +8,7 @@ getColor <- function(n = 6, h = c(0, 360) + 15){
   hcl(h = (seq(h[1], h[2], length = n)), c = 100, l = 65)
 }
 
-percent_map <- function(varname, var, my_color, percentage = TRUE) {
+percent_map <- function(varname, var, my_color, percentage = TRUE, numColors = 1) {
   countries <- read.csv("./Datasets/europe.csv", header = TRUE, sep = ",")
   target<-c("austria","belgium","bulgaria","croatia","czech republic","denmark",
             "estonia","finland","germany","greece","hungary","iceland","ireland","italy",
@@ -19,17 +19,23 @@ percent_map <- function(varname, var, my_color, percentage = TRUE) {
   data(country.map)
   data(country.regions)
   
-  gg <- country_choropleth(datas, legend = varname, num_colors=1, zoom=target)
-  gg <- gg + xlim(-31.266001, 39.869301)
-  gg <- gg + ylim(27, 72)
-  gg <- gg + coord_map("lambert", lat0=27, lat1=72)
-  
   if(percentage) {
+    gg <- country_choropleth(datas, legend = varname, num_colors=1, zoom=target)
+    gg <- gg + xlim(-31.266001, 39.869301)
+    gg <- gg + ylim(27, 72)
+    gg <- gg + coord_map("lambert", lat0=27, lat1=72)
     gg <- gg + scale_fill_continuous(low="white", high=my_color)
   }
   else {
+    gg <- country_choropleth(datas, legend = varname, zoom=target)
+    gg <- gg + xlim(-31.266001, 39.869301)
+    gg <- gg + ylim(27, 72)
+    gg <- gg + coord_map("lambert", lat0=27, lat1=72)
     gg <- gg + scale_fill_continuous(low=my_color, high=my_color[length(my_color)], guide="legend")
-
+    gg <- gg + scale_fill_manual(values = c("red", "green", "blue",
+                                            "yellow", "orange", "grey",
+                                            "purple", "magenta", "cyan",
+                                            "darkGreen", "brown", "white"), guide = guide_legend(reverse = TRUE))
   }
   gg
 }
@@ -50,13 +56,13 @@ selectColour <- function(var, countries){
   my_colors <- getColor(n=7)
   
   selectedColour <- switch(var, 
-                   "Area" = my_colors[1],
-                   "GDP" = my_colors[2],
-                   "Inflation" = my_colors[3],
-                   "Life Expectancy" = my_colors[4],
-                   "Military" = my_colors[5],
-                   "Population Growth" = my_colors[6],
-                   "Unemployment"= my_colors[7])
+                           "Area" = my_colors[1],
+                           "GDP" = my_colors[2],
+                           "Inflation" = my_colors[3],
+                           "Life Expectancy" = my_colors[4],
+                           "Military" = my_colors[5],
+                           "Population Growth" = my_colors[6],
+                           "Unemployment"= my_colors[7])
   
   return(selectedColour)
 }

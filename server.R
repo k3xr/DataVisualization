@@ -105,7 +105,9 @@ shinyServer(
       color <- getColor(n = strtoi(input$clusterNum))
       percent_map("Clusters", 
                   data, 
-                  color, percentage = FALSE)
+                  color, 
+                  percentage = FALSE, 
+                  strtoi(input$clusterNum))
     })
   }
 )
