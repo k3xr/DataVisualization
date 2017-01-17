@@ -8,7 +8,7 @@ countries <- read.csv("./Datasets/europe.csv", header = TRUE, sep = ",")
 source("helpers.R")
 
 shinyServer(
-  function(input, output) {
+  function(input, output,session) {
     
     #Reactive clustering to avoid executing it more than 1 time per plot
     clusterResult <- reactive({
@@ -16,22 +16,49 @@ shinyServer(
       data2 <- selectData(input$clusterAttr2, countries)
       hierarchicalCluster(countries, input$clusterAttr1, input$clusterAttr2, data1, data2, input$clusterNum)
     })
+
+    rankingData <- reactive({
+      selectedVar <- input$rankingVar
+      data <- selectData(input$rankingVar, countries)
+      dataMax <- max(data)
+      dataMin <- min(data)
+      updateSliderInput(session,"range", max=dataMax, min=dataMin,value=c(dataMin, dataMax))
+      data
+    })
     
     output$map <- renderPlot({
-      data <- selectData(input$var, countries)
-      color <- selectColour(input$var)
-      percent_map(input$var, 
+      data <- rankingData()
+      inputMin <- input$range[1]
+      inputMax <- input$range[2]
+
+      if (inputMin != min(data) || inputMax != max(data)){
+        data[data > inputMax] <- inputMin
+        data[data < inputMin] <- inputMin 
+        data[data > inputMin] <- inputMax
+      }
+      
+      color <- selectColour(input$rankingVar)
+      percent_map(input$rankingVar, 
                   data, 
                   color)
     })
     output$ranking <- renderPlot({
-      data <- selectData(input$var, countries)
-      color <- selectColour(input$var)
+      data <- rankingData()
+      inputMin <- input$range[1]
+      inputMax <- input$range[2]
       
-      plot <- ggplot(countries, aes(y=data, x=reorder(countries$Country, data)))
+      filteredDf = data.frame("Country"=countries$Country,"Data"=data)
+      
+      if (inputMin != min(data) || inputMax != max(data)){
+        filteredDf <- filteredDf[filteredDf$Data >= inputMin,]
+        filteredDf <- filteredDf[filteredDf$Data <= inputMax,]
+      }
+      color <- selectColour(input$rankingVar)
+      
+      plot <- ggplot(filteredDf, aes(y=Data, x=reorder(Country, Data)))
       plot <- plot + geom_bar(stat='identity', fill=color)
-      plot <- plot + coord_flip() + labs(y=input$var, x="Country")
-      plot <- plot + geom_text(aes(label = data), position = position_stack(vjust = 0.5))
+      plot <- plot + coord_flip() + labs(y=input$rankingVar, x="Country")
+      plot <- plot + geom_text(aes(label = filteredDf$Data), position = position_stack(vjust = 0.5))
       plot
     })
     
@@ -63,7 +90,9 @@ shinyServer(
     output$clusterPlot <- renderPlot({
       clusterResult()$ggPlot
     })
-
+    output$clusterTree <- renderPlot({
+      plot(clusterResult()$treePlot, labels=countries$Country, xlab="Countries hierarchical clusters by euclidean distance",sub="")
+    })
     output$clusterTable <- renderTable({
       clusterResult()$clustersData
     })

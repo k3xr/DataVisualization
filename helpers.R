@@ -34,8 +34,6 @@ percent_map <- function(varname, var, my_color, percentage = TRUE) {
   gg
 }
 
-
-
 selectData <- function(var, countries){
   data <- switch(var, 
                  "Area" = countries$Area,
@@ -76,7 +74,7 @@ hierarchicalCluster <- function(csvData, name1, name2, data1, data2, clusterNum)
   plot <- ggplot(plotData, aes(var1, var2, color=Cluster)) + geom_point() + labs(x=name1, y=name2)
   
   #Visualize tree
-  treePlot <- plot(clusters)
+  treePlot <- clusters
   
   #Aggregate the data by Clusters
   newDf = data.frame(csvData, cluster=clusterCut)

@@ -5,16 +5,21 @@ library(shiny)
 shinyUI(fluidPage(
   titlePanel("EuropeVis"),
   tabsetPanel(
-    tabPanel("Explore",
+    tabPanel("Explore and Compare",
              sidebarLayout(
                sidebarPanel(
                  helpText("Map with information from European countries"),
                  
-                 selectInput("var", 
+                 selectInput("rankingVar", 
                              label = "Choose a variable to display",
                              choices = c("Area", "GDP", "Inflation", "Life Expectancy", "Military", "Population Growth",
                                          "Unemployment"),
-                             selected = "Area")
+                             selected = "Area"),
+                 sliderInput("range",
+                             label = "Select a range to filter the data",
+                             min=0, max=100, value = c(0, 100)
+                 )
+                 
                ),
                mainPanel(plotOutput("map"))
              ),
@@ -26,7 +31,7 @@ shinyUI(fluidPage(
                )
              )
     ),
-    tabPanel("Discover",
+    tabPanel("Correlation",
              
              sidebarLayout(
                sidebarPanel(
@@ -48,11 +53,11 @@ shinyUI(fluidPage(
                mainPanel(plotOutput("correlationPlot"))  
              )
     ),
-    tabPanel("Clustering",
+    tabPanel("Cluster Analyisis",
              
              sidebarLayout(
                sidebarPanel(
-                 helpText("Visualize the results of hierarchical clustering."),
+                 helpText("Visualize the results of hierarchical clustering analysis."),
                  
                  selectInput("clusterAttr1", 
                              label = "Choose the first attribute to see the clustering",
@@ -70,14 +75,22 @@ shinyUI(fluidPage(
                              choices = c(3 , 4, 5, 6, 7, 8, 9, 10),
                              selected = 3)
                ),
-               mainPanel(plotOutput("clusterPlot"))
+               mainPanel(
+                 
+                 plotOutput("clusterTree")
+               )
+               
+             ),
+             fluidRow(style='padding-left:20px',
+                      h3("Cluster groups"),
+                      plotOutput("clusterPlot")       
              ),
              fluidRow(
                style='padding-left:20px',
                column(5,
                       
-                        h3("Countries by cluster"),
-                        tableOutput("clusterGroups")
+                      h3("Countries by cluster"),
+                      tableOutput("clusterGroups")
                ),
                column(7,
                       plotOutput("clusterMap")  
